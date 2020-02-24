@@ -69,7 +69,7 @@ dn: dc=devopsldab,dc=com
 objectClass: top
 objectClass: dcObject
 objectclass: organization
-o: devopsldab com
+o: devopslab com
 dc: devopsldab
 
 dn: cn=Manager,dc=devopsldab,dc=com
@@ -86,7 +86,7 @@ objectClass: organizationalUnit
 ou: Group
 EOF
 
-ldapadd -x -D cn=Manager,dc=devopsldab,dc=com -w $pass -f ./baseldapdomain.ldif
+ldapadd -x -D cn=Manager,dc=devopsldab,dc=com -w $rootpass -f ./baseldapdomain.ldif
 
 #Create the definitions for a LDAP group
 cat << EOF > ./ldapgroup.ldif
@@ -97,7 +97,7 @@ gidNumber: 1005
 EOF
 
 #Create another LDIF file and pass for user
-ldapadd -x  -w $pass -D "cn=Manager,dc=devopsldab,dc=com" -f ./ldapgroup.ldif
+ldapadd -x  -w $rootpass -D "cn=Manager,dc=devopsldab,dc=com" -f ./ldapgroup.ldif
 userpass="Epam2020"
 slappasswd -s $userpass > .user
 user=$(cat ".user")
@@ -121,7 +121,7 @@ shadowMax: -1
 shadowWarning: 0
 EOF
 
-ldapadd -x -D cn=Manager,dc=devopsldab,dc=com -w $pass -f  ./ldapuser.ldif
+ldapadd -x -D cn=Manager,dc=devopsldab,dc=com -w $rootpass -f  ./ldapuser.ldif
 
 #install phpldapadmin
 
