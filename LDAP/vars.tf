@@ -5,7 +5,7 @@ variable "project_name" {
 }
 
 variable "size" {
-	default = "30"
+	default = "20"
 }
 
 variable "image" {
@@ -13,17 +13,13 @@ variable "image" {
 }
 
 variable "zone" {
-	default = "us-central1-a"
+	default = "us-central1-b"
 }
 
 variable "region" {
 	default = "us-central1"
 }
 
-variable "tags" {
-type = "list"
-default = ["https-server", "http-server", "ssh"]
-}
 
 
 

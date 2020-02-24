@@ -13,12 +13,22 @@ resource "google_compute_subnetwork" "public-subnet" {
   depends_on    = ["google_compute_network.vpc"]
 }
 
+resource "google_compute_firewall" "allow-ports" {
+  name          = "allow-ports"
+  network       = "${google_compute_network.vpc.name}"
+  depends_on    = ["google_compute_subnetwork.public-subnet"]
+
+  allow {
+    protocol    = "tcp"
+    ports       = ["80", "389", "22"]
+  }
+}
+
 resource "google_compute_instance" "ldap-server" {
-  name         = "server"
-  project     = "${var.project_name}"
-  machine_type = "custom-1-4608"
-  zone         = "${var.zone}"
-  tags = "${var.tags}"
+  name          = "server"
+  project       = "${var.project_name}"
+  machine_type  = "custom-1-4608"
+  zone          = "${var.zone}"
   depends_on    = ["google_compute_subnetwork.public-subnet"]
 
   boot_disk {
@@ -36,18 +46,17 @@ resource "google_compute_instance" "ldap-server" {
   }
  
  metadata {
-    startup_script = "${file("script.sh")}"  
+    startup_script = "${file("./script.sh")}"  
     }
- }
 
+ }
 
 resource "google_compute_instance" "ldap-client" {
   name         = "client"
-  project     = "${var.project_name}"
+  project      = "${var.project_name}"
   machine_type = "custom-1-4608"
   zone         = "${var.zone}"
-  tags = "${var.tags}"
-  depends_on    = ["google_compute_subnetwork.public-subnet"]
+  depends_on   = ["google_compute_subnetwork.public-subnet"]
 
   boot_disk {
     initialize_params {
@@ -64,6 +73,20 @@ resource "google_compute_instance" "ldap-client" {
   }
  
  metadata {
-    startup_script = "${file("clientscript.sh")}"  
+    startup_script = "${file("./clientscript.sh")}"  
     }
+
  }
+
+
+# resource "google_compute_firewall" "allow-ssh" {
+#   name          = "allowssh"
+#   network       = "${google_compute_network.vpc_network.self_link}"
+
+#   allow {
+#     protocol    = "tcp"
+#     ports       = ["22"]
+#   }
+
+#   target_tags   = ["ssh"]
+#}

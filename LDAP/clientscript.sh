@@ -1,12 +1,9 @@
-#!/bin/bash
-sleep 200s
-sudo yum -y install openldap-clients nss-pam-ldapd
-sudo yum install -y nss-pam-ldapd
-ldapserver= 10.13.0.13
-ldapbasedn="dc=devopsldab"
+sleep 180s
+yum -y install openldap-clients
+yum -y install nss-pam-ldapd
 
-sudo authconfig --enableldap --enableldapauth --ldapserver= 10.13.0.13 --ldapbasedn="dc=devopsldab,dc=com" --enablemkhomedir --update
-sudo sed -i "s@PasswordAuthentication no@PasswordAuthentication yes@"  /etc/ssh/sshd_config
-sudo systemctl restart sshd
-sudo systemctl restart nslcd
+authconfig --enableldap --enableldapauth --ldapserver=10.13.1.13 --ldapbasedn="dc=devopsldab,dc=com" --enablemkhomedir --update
+sed -i "s@PasswordAuthentication no@PasswordAuthentication yes@"  /etc/ssh/sshd_config
+systemctl restart sshd
+systemctl restart nslcd
 getent passwd 

@@ -1,10 +1,11 @@
-#!/bin/bash
-#sudo -i
-#install ldap server
-sudo yum install openldap openldap-servers openldap-clients -y
-sudo systemctl start slapd
-sudo systemctl enable slapd
-sudo firewall-cmd --add-service=ldap
+sleep 60s
+yum -y install epel-release
+yum install -y openldap 
+yum install -y openldap-servers
+yum install -y openldap-clients
+systemctl start slapd
+systemctl enable slapd
+firewall-cmd --add-service=ldap
 
 #generate pass
 rootpass="Epam2020"
@@ -19,14 +20,14 @@ add: olcRootPW
 olcRootPW: $pass
 EOF
 
-sudo ldapadd -Y EXTERNAL -H ldapi:/// -f ldaprootpasswd.ldif 
-sudo cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
-sudo chown -R ldap:ldap /var/lib/ldap/DB_CONFIG
+ldapadd -Y EXTERNAL -H ldapi:/// -f ./ldaprootpasswd.ldif 
+cp /usr/share/openldap-servers/DB_CONFIG.example /var/lib/ldap/DB_CONFIG
+chown -R ldap:ldap /var/lib/ldap/DB_CONFIG
 
 # Import schemas
-sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif 
-sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
-sudo ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/cosine.ldif 
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/nis.ldif
+ldapadd -Y EXTERNAL -H ldapi:/// -f /etc/openldap/schema/inetorgperson.ldif
 
 #Add domain
 cat << EOF > ./ldapdomain.ldif
@@ -34,7 +35,7 @@ dn: olcDatabase={1}monitor,cn=config
 changetype: modify
 replace: olcAccess
 olcAccess: {0}to * by dn.base="gidNumber=0+uidNumber=0,cn=peercred,cn=external,cn=auth"
-read by dn.base="cn=Manager,dc=devopsldab,dc=com" read by * none
+  read by dn.base="cn=Manager,dc=devopsldab,dc=com" read by * none
 
 dn: olcDatabase={2}hdb,cn=config
 changetype: modify
@@ -60,7 +61,7 @@ olcAccess: {1}to dn.base="" by * read
 olcAccess: {2}to * by dn="cn=Manager,dc=devopsldab,dc=com" write by * read
 EOF
 
-sudo ldapmodify -Y EXTERNAL -H ldapi:/// -f ldapdomain.ldif
+ldapmodify -Y EXTERNAL -H ldapi:/// -f ./ldapdomain.ldif
 
 #Add root to server
 cat << EOF > ./baseldapdomain.ldif
@@ -85,7 +86,7 @@ objectClass: organizationalUnit
 ou: Group
 EOF
 
-sudo ldapadd -x -D cn=Manager,dc=devopsldab,dc=com -W $pass -f baseldapdomain.ldif
+ldapadd -x -D cn=Manager,dc=devopsldab,dc=com -w $pass -f ./baseldapdomain.ldif
 
 #Create the definitions for a LDAP group
 cat << EOF > ./ldapgroup.ldif
@@ -96,39 +97,39 @@ gidNumber: 1005
 EOF
 
 #Create another LDIF file and pass for user
-sudo ldapadd -x  -W $pass -D "cn=Manager,dc=devopsldab,dc=com" -f ldapgroup.ldif
+ldapadd -x  -w $pass -D "cn=Manager,dc=devopsldab,dc=com" -f ./ldapgroup.ldif
 userpass="Epam2020"
 slappasswd -s $userpass > .user
 user=$(cat ".user")
 
 cat << EOF > ./ldapuser.ldif 
-dn: uid=user,ou=People,dc=devopsldab,dc=com
+dn: uid=customuser,ou=People,dc=devopsldab,dc=com
 objectClass: top
 objectClass: account
 objectClass: posixAccount
 objectClass: shadowAccount
-cn: tecmint
-uid: tecmint
+cn: customuser
+uid: customuser
 uidNumber: 1005
 gidNumber: 1005
-homeDirectory: /home/user
+homeDirectory: /home/customuser
 userPassword: $user
 loginShell: /bin/bash
-gecos: user
+gecos: customuser
 shadowLastChange: 0
 shadowMax: -1
 shadowWarning: 0
 EOF
 
-sudo ldapadd -x -D cn=Manager,dc=devopsldab,dc=com -W $pass -f  ldapuser.ldif
+ldapadd -x -D cn=Manager,dc=devopsldab,dc=com -w $pass -f  ./ldapuser.ldif
 
 #install phpldapadmin
 
-sudo yum --enablerepo=epel -y install phpldapadmin
+yum --enablerepo=epel -y install phpldapadmin
 
 #changing in config.php
-sudo sed -i "s@// \$servers->setValue('login','attr','dn');@\$servers->setValue('login','attr','dn');@" /etc/phpldapadmin/config.php
-sudo sed -i "s@\$servers->setValue('login','attr','uid');@// \$servers->setValue('login','attr','uid');@" /etc/phpldapadmin/config.php
+sed -i "s@// \$servers->setValue('login','attr','dn');@\$servers->setValue('login','attr','dn');@" /etc/phpldapadmin/config.php
+sed -i "s@\$servers->setValue('login','attr','uid');@// \$servers->setValue('login','attr','uid');@" /etc/phpldapadmin/config.php
 
 #changing in phpldapadmin.conf
 cat << EOF > ./phpldapadmin.conf
@@ -148,7 +149,8 @@ Alias /ldapadmin /usr/share/phpldapadmin/htdocs
   </IfModule>
 </Directory>
 EOF
-sudo cp ./phpldapadmin.conf /etc/httpd/conf.d/phpldapadmin.conf
+cp ./phpldapadmin.conf /etc/httpd/conf.d/phpldapadmin.conf
 
 #go
-sudo systemctl restart httpd
+systemctl restart slapd
+systemctl restart httpd
