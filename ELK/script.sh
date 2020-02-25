@@ -11,7 +11,7 @@ sudo tar -axvf apache-tomcat-8.5.51.tar.gz -C /opt/tomcat --strip-components=1
 sudo cd /opt/tomcat
 sudo chown -R tomcat: /opt/tomcat
 
-sudo cat << EOF > /etc/systemd/system/tomcat.service
+cat << EOF | sudo tee /etc/systemd/system/tomcat.service
 [Unit]
 
 Description=Apache Tomcat Web Application Container
@@ -41,7 +41,7 @@ sudo systemctl start tomcat
 
 sudo rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
 
-sudo cat << EOF > /etc/yum.repos.d/logstash.repo
+cat << EOF | sudo tee /etc/yum.repos.d/logstash.repo
 [logstash-7.x]
 name=Elastic repository for 7.x packages
 baseurl=https://artifacts.elastic.co/packages/7.x/yum
