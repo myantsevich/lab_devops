@@ -2,10 +2,8 @@
 
 sudo -i
 
-
-sudo -i
-mkdir /opt/second
-rpm -Uvh https://repo.zabbix.com/zabbix/4.0/rhel/7/x86_64/zabbix-release-4.0-1.el7.noarch.rpm
+mkdir /opt/third
+rpm -Uvh https://repo.zabbix.com/zabbix/4.4/rhel/7/x86_64/zabbix-release-4.4-1.el7.noarch.rpm   
 
 yum install zabbix-agent -y 
 

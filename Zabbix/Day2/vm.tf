@@ -15,7 +15,7 @@ resource "google_compute_subnetwork" "public-subnet" {
 
 resource "google_compute_firewall" "allow-ports" {
   name          = "allow-ports"
-  network       = "${google_compute_network.vpc.name}"
+  network       = "${google_compute_network.vpc.self_link}"
   depends_on    = ["google_compute_subnetwork.public-subnet"]
 
   allow {
@@ -24,7 +24,7 @@ resource "google_compute_firewall" "allow-ports" {
   }
 }
 
-resource "google_compute_instance" "vm1" {
+resource "google_compute_instance" "vm" {
   count         = "${var.instance_count}"
   name          = "vm-${count.index + 1}"
   //name          = "vm1"
