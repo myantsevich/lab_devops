@@ -8,12 +8,12 @@
 
 ### Step 1 - adding new item 
 <p align="center">
-  <img src="1.png" width="700px" />
+  <img src="2.png" width="700px" />
 </p>
 
 ### Step 2 - checking logs
 <p align="center">
-  <img src="2.png" width="700px" />
+  <img src="1.png" width="700px" />
 </p>
 
 ### Step 3 - setting trigger
