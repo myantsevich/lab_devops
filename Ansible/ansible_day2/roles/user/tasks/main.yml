@@ -1,0 +1,10 @@
+---
+- name: create user
+  user: 
+    name: '{{ app_user }}'
+    uid: "{{ app_uid }}" 
+    home: "{{ app_home }}" 
+
+
+
+

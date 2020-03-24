@@ -1,0 +1,6 @@
+---
+# defaults file for user
+user_name: new_user
+user_id: 950
+source_file: new_user.sudoers
+destin_file: /etc/sudoers.d/new_user
