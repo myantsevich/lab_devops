@@ -1,0 +1,28 @@
+---
+- name: create dir
+  file: path={{ app_home }}/conf state=directory
+- name: create dir
+  file: path={{ app_home }}/bin state=directory
+- name: create conf file
+  template:
+    src: msg-conf.j2
+    dest: "{{ destin_file }}"
+- name: create unit file
+  template:
+    src: msg-service.j2
+    dest: "{{ destin_unit }}"
+  notify:
+    - systemd daemon reload
+- name: download from url
+  get_url: url=https://playpit-labs-assets.s3-eu-west-1.amazonaws.com/msg-service/msg-server dest=/opt/msg-service/bin/  owner={{ app_user }} group={{ app_group }} mode=0755
+- name: cnage ownership
+  file:
+    path: '{{ app_home }}'
+    state: directory
+    owner: '{{ app_user }}'
+    group: '{{ app_group }}'
+    recurse: yes
+- name: enable application service
+  service: name=msg-service enabled=yes
+- name: start application service
+  service: name=msg-service state=started

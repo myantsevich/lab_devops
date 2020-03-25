@@ -1,0 +1,9 @@
+---
+dependencies: 
+  - role: user
+    vars:  
+      app_user: msg-service 
+      app_group: msg-service
+      app_home: /opt/msg-service/
+      app_uid: 2904
+    

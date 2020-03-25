@@ -1,0 +1,8 @@
+---
+source_unit: msg-service.service
+destin_unit: /etc/systemd/system/msg-service.service
+source_file: msg-service.conf 
+destin_file: /opt/msg-service/conf/msg-service.conf
+app_port: 8080
+app_msg_header: "<img width='250' src='https://www.md-webdesigner.com/objectif-libre/wp-content/uploads/2017/05/Ansible.png'>"
+app_msg_message: "<i class='far fa-thumbs-up'></i>Almighty Ansible<p style='font-size: 16pt'>Student:"
