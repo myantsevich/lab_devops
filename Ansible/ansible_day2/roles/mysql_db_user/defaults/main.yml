@@ -1,0 +1,16 @@
+---
+mysql_user_home: /root
+mysql_user_name: myantsevich
+mysql_user_password: myantsevich
+database: dev
+
+# The default root user installed by mysql - almost always root
+mysql_root_home: /root
+mysql_root_username: root
+mysql_root_password: root
+
+# Set this to `true` to forcibly update the root password.
+mysql_root_password_update: false
+mysql_user_password_update: false
+
+mysql_enabled_on_startup: true

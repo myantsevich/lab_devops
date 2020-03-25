@@ -1,0 +1,14 @@
+[Unit]
+Description=Simple Message Server
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=-{{ destin_file }}
+ExecStart={{ app_home }}bin/mysql-check
+ExecStop=/bin/kill -s QUIT $MAINPID
+User={{ app_user }}
+Group={{ app_group }}
+
+[Install]
+WantedBy=multi-user.target

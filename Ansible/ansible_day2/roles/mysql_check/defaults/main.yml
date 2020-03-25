@@ -1,0 +1,8 @@
+---
+destin_unit: /etc/systemd/system/mysql_check.service
+destin_file: /opt/mysql_check/conf/mysql_check.conf
+app_home: /opt/mysql_check/
+mysql_check_port: 8081
+app_user: mysql_check
+app_group: mysql_check
+app_uid: 2905

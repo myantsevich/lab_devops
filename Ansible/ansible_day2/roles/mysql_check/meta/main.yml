@@ -1,0 +1,8 @@
+---
+dependencies: 
+  - role: user
+    vars:  
+      app_user: mysql_check
+      app_group: mysql_check
+      app_home: /opt/mysql_check/
+      app_uid: 2905
