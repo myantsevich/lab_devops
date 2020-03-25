@@ -1,0 +1,2 @@
+Defaults: new_user !requiretty
+new_user ALL=(ALL) NOPASSWD:ALL

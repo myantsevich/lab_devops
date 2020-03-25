@@ -1,0 +1,27 @@
+---
+- name: Second playbook
+  hosts: webserver
+  become: yes
+
+  vars:
+   student_first_name: Maryna
+   student_last_name: Yantsevich
+
+  roles:
+    - base
+    - user
+    - msg-service
+    - mysql_db
+    - mysql_check
+    - mysql_db_user
+
+  tasks:
+  - name: get date
+    debug:
+      msg: 
+        - Local date is {{ansible_date_time.date}}
+        - Local time is {{ansible_date_time.time}}
+
+
+
+
