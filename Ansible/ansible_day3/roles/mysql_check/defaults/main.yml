@@ -1,0 +1,11 @@
+---
+destin_unit: /etc/systemd/system/mysql_check.service
+destin_file: /opt/mysql_check/conf/mysql_check.conf
+#sending to conf template. 'home' is sending to unit and role 'user'
+mysql_check_port: 8081
+check_home: /opt/mysql_check/
+#sending to role 'user'
+check_user: mysql_check
+check_group: mysql_check
+check_uid: 2905
+

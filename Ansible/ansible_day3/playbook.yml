@@ -1,0 +1,32 @@
+---
+- name: Third playbook
+  hosts: all
+  gather_facts: yes
+  become: yes
+
+  vars:
+   student_first_name: Maryna
+   student_last_name: Yantsevich
+   msg_port: 8080
+   check_port: 8081
+   host:  '{{ hostvars["ansible-1"]["ansible_default_ipv4"]["address"] }}'
+   host2: '{{ hostvars["ansible-2"]["ansible_default_ipv4"]["address"] }}'
+
+  roles:
+    - { role: user, when: 'inventory_hostname == play_hosts[0]'}
+    - { role: msg-service, when: 'inventory_hostname == play_hosts[0]'}
+    - { role: mysql_db, when: 'inventory_hostname == play_hosts[1]'}
+    - { role: mysql_check, when: 'inventory_hostname == play_hosts[0]'}
+    - { role: mysql_db_user, when: 'inventory_hostname == play_hosts[1]'}
+    - { role: nginx_base, when: 'inventory_hostname == play_hosts[2]'}
+    - role: web-service
+      vars:
+        backends:
+        - context: msg-service
+          hostip: "{{ host }}"
+          hostport: "{{ msg_port }}"
+        - context: mysql-check
+          hostip: "{{ host2 }}"
+          hostport: "{{ check_port }}"
+      when: 'inventory_hostname == play_hosts[2]'
+

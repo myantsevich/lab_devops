@@ -1,0 +1,14 @@
+---
+source_unit: msg-service.service
+destin_unit: /etc/systemd/system/msg-service.service
+source_file: msg-service.conf 
+destin_file: /opt/msg-service/conf/msg-service.conf
+#sending to conf remplate
+msg_port: 8080
+app_msg_header: "<img width='250' src='https://www.md-webdesigner.com/objectif-libre/wp-content/uploads/2017/05/Ansible.png'>"
+app_msg_message: "<i class='far fa-thumbs-up'></i>Almighty Ansible<p style='font-size: 16pt'>Student:"
+#sending to role user
+msg_user: msg-service 
+msg_group: msg-service
+msg_home: /opt/msg-service/
+msg_uid: 2904 

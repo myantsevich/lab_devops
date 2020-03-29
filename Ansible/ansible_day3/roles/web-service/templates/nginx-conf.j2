@@ -1,0 +1,14 @@
+server {
+ listen 80 default_server;
+        listen [::]:80 default_server;
+
+{% for i in backends %}
+
+ location /{{ i.context }} {
+    proxy_pass http://{{ i.hostip }}:{{ i.hostport }}/;
+  }
+{% endfor %}
+
+}
+
+

@@ -1,0 +1,8 @@
+---
+dependencies:
+  - role: user
+    vars:
+      app_user: "{{ msg_user }}"
+      app_group: "{{ msg_group }}"
+      app_home: "{{ msg_home }}"
+      app_uid: "{{ msg_uid }}"

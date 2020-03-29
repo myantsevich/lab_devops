@@ -1,0 +1,27 @@
+---
+- name: Create msg dirs
+  file:
+    path: '{{ check_home }}{{ item }}'
+    state: directory
+    mode: 0755
+    owner: '{{ check_user }}'
+    group: '{{ check_group }}'
+  with_items:
+    - bin
+    - conf
+- name: create conf file
+  template:
+    src: mysql-check-conf.j2
+    dest: "{{ destin_file }}"
+- name: create unit file
+  template:
+    src: mysql-check-service.j2
+    dest: "{{ destin_unit }}"
+  notify:
+    - systemd daemon reload
+- name: download from url
+  get_url: url=https://playpit-labs-assets.s3-eu-west-1.amazonaws.com/mysql-check/mysql-check dest={{ check_home }}bin/  owner={{ check_user }} group={{ check_group }} mode=0755
+- name: enable application service
+  service: name=mysql_check enabled=yes
+- name: start application service
+  service: name=mysql_check state=started

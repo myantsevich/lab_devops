@@ -1,0 +1,4 @@
+---
+- name: systemd nginx reload
+  systemd: nginx_state=reloaded
+  become: yes

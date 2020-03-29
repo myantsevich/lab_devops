@@ -1,0 +1,5 @@
+---
+mysql_user_home: /root
+mysql_user_name: myantsevich
+mysql_user_password: myantsevich
+database: dev

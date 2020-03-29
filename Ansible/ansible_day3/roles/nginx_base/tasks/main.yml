@@ -1,0 +1,10 @@
+- name: nginx installed
+  apt: name=nginx
+
+- name: start nginx
+  service: name=nginx state=started enabled=yes
+
+- name: copy custom page
+  copy:
+    src: index.html
+    dest: /var/www/html/index.nginx-debian.html

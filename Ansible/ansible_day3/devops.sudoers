@@ -1,0 +1,2 @@
+Defaults:!requiretty
+devops ALL=(ALL) NOPASSWD:ALL
