@@ -1,0 +1,34 @@
+---
+- name: packer
+  hosts: all
+  become: yes
+
+  vars:
+    destin_file: /opt/msg-service/conf/
+    destin_unit: /etc/systemd/system/
+    msg_user: msg-service
+
+  tasks:
+  - name: create  dirs
+    file:
+      path: '/opt/msg-service/{{ item }}'
+      state: directory
+    with_items:
+      - bin
+      - conf
+  - name: create conf file
+    copy:
+      src: msg-service.conf 
+      dest: "{{ destin_file }}"
+  - name: create unit file
+    copy:
+      src: msg-service.service
+      dest: "{{ destin_unit }}"
+  - name: download from url
+    get_url: url=https://playpit-labs-assets.s3-eu-west-1.amazonaws.com/msg-service/msg-server dest=/opt/msg-service/bin/
+  - name: reload daemon
+    systemd: daemon_reload=yes
+  - name: enable application service
+    service: name=msg-service enabled=yes
+  - name: start application service
+    service: name=msg-service state=started
