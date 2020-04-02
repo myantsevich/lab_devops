@@ -1,0 +1,26 @@
+---
+- name: First playbook
+  hosts: server
+  become: yes
+
+  vars:
+    source_file: /home/marysh/ansible/msg-service.conf 
+    destin_file: /opt/msg-service/conf/
+    source_unit: /home/marysh/ansible/msg-service.service
+    destin_unit: /etc/systemd/system/
+
+  tasks:
+  - name: create user
+    user:  name=msg-service
+  - name: create dir
+    file: path=/opt/msg-service/ state=directory mode=0755
+  - name: copy conf file
+    copy: src={{ source_file }} dest={{ destin_file }} owner=msg-service group=msg-service mode=0644
+  - name: download from url
+    get_url: url=https://playpit-labs-assets.s3-eu-west-1.amazonaws.com/msg-service/msg-server dest=/opt/msg-service/ mode=0644
+  - name: copy unit
+    copy: src={{ source_unit}} dest={{ destin_unit }} owner=msg-service group=msg-service mode=0644
+  - name: enable application service
+    service: name=msg-service enabled=yes
+  - name: start application service
+    service: name=msg-service state=started

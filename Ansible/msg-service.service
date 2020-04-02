@@ -1,0 +1,12 @@
+[Unit]
+Description=Simple Message Server
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=-/opt/msg-service/msg-service.conf
+ExecStart=/opt/msg-service/bin/msg-server
+ExecStop=/bin/kill -s QUIT $MAINPID
+
+[Install]
+WantedBy=multi-user.target
