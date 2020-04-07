@@ -1,0 +1,35 @@
+---
+- name: Install Java
+  apt:
+    name: openjdk-11-jdk
+    state: present
+    update_cache: yes
+- name: create  dirs
+  file:
+    path: "{{ sonar_home }}"
+    state: directory
+    mode: 0755
+    owner: "{{ sonar_user }}"
+    group: "{{ sonar_group }}"
+  # with_items:
+  #   - { home: "{{ sonar_home }}", user: "{{ sonar_user }}", group: "{{ sonar_group }}" }
+  #   - { home: "{{ java_home }}", user: 'root', group: 'root' }
+- name: create unit file
+  template:
+    src: sonar.j2
+    dest: /etc/systemd/system/sonarqube.service
+  notify:
+    - systemd daemon reload
+- name: Unarchive a file that needs to be downloaded (added in 2.0)
+  unarchive:
+    src: 'https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.2.0.32929.zip'
+    dest: "{{ sonar_home }}"
+    owner: "{{ sonar_user }}"
+    group: "{{ sonar_group }}"
+    mode: 0755
+    remote_src: yes
+  # with_items:
+  #    - { home: "{{ sonar_home }}" , user: "{{ sonar_user }}" , group: "{{ sonar_group }}", src: 'https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-8.2.0.32929.zip' }
+  #    - { home: "{{ java_home }}" , user: 'root', group: 'root', src: 'https://download.java.net/java/GA/jdk13.0.2/d4173c853231432d94f001e99d882ca7/8/GPL/openjdk-13.0.2_linux-x64_bin.tar.gz' }
+- name: enable application service
+  service: name=sonarqube.service state=started enabled=yes

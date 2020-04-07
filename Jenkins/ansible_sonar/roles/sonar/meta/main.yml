@@ -1,0 +1,31 @@
+---
+dependencies:
+  - role: user
+    vars:
+      app_user: "{{ sonar_user }}"
+      app_group:  "{{ sonar_group }}"
+      app_home: "{{ sonar_home }}"
+      app_uid: "{{ sonar_uid }}"
+
+
+
+    #   "{{ item.user }}"
+    #   app_group: "{{ item.group }}"
+    #   app_home: "{{ item.home }}"
+    #   app_uid: "{{ item.uid }}"
+    # with_items:
+    #   - { user: "{{ sonar_user }}", group: "{{ sonar_group }}", home: "{{ sonar_home }}", uid: "{{ sonar_uid }}" }
+    #   - { user: "{{ java_user }}", group: "{{ java_group }}", home: "{{ java_home }}", uid: "{{ java_uid }}" }
+
+
+
+
+    #         vars:
+    #     backends:
+    #     - context: msg-service
+    #       hostip: "{{ host }}"
+    #       hostport: "{{ msg_port }}"
+    #     - context: mysql-check
+    #       hostip: "{{ host2 }}"
+    #       hostport: "{{ check_port }}"
+    #   when: 'inventory_hostname == play_hosts[2]'

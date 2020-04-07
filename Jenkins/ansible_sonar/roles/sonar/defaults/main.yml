@@ -1,0 +1,6 @@
+---
+#sending to role user
+sonar_user: sonarqube
+sonar_group: sonarqube
+sonar_home: /opt/sonarqube
+sonar_uid: 2922

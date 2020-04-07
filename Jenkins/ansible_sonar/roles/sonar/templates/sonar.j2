@@ -1,0 +1,19 @@
+[Unit]
+Description=SonarQube service
+After=syslog.target network.target
+
+[Service]
+Type=simple
+User={{ sonar_user }}
+Group={{ sonar_user }}
+PermissionsStartOnly=true
+ExecStart=/usr/bin/java -Xms32m -Xmx32m -Djava.net.preferIPv4Stack=true -jar {{ sonar_home }}/lib/sonar-application-8.2.0.32929.jar
+StandardOutput=syslog
+LimitNOFILE=65536
+LimitNPROC=8192
+TimeoutStartSec=5
+Restart=always
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
