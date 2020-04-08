@@ -1,0 +1,8 @@
+---
+dependencies:
+  - role: user
+    vars:
+      app_user: "{{ nexus_user }}"
+      app_group:  "{{ nexus_group }}"
+      app_home: "{{ nexus_home }}"
+      app_uid: "{{ nexus_uid }}"
