@@ -1,0 +1,18 @@
+---
+- name: create  dirs
+  file:
+    path: '{{ jn_home }}'
+    state: directory
+    mode: 0755
+    owner: '{{ jn_user }}'
+    group: '{{ jn_group }}'
+- name: create unit file
+  template:
+    src: jenkins.j2
+    dest: /etc/systemd/system/jenkins.service
+  notify:
+    - systemd daemon reload
+- name: download from url
+  get_url: url=http://mirrors.jenkins.io/war-stable/latest/jenkins.war dest={{ jn_home }}  owner={{ jn_user }} group={{ jn_group }} mode=0755
+- name: start jenkins
+  service: name=nginx state=started enabled=yes

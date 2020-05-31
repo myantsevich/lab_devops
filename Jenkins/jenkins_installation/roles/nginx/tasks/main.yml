@@ -1,0 +1,31 @@
+---
+- name: nginx installed
+  apt: name=nginx
+
+- name: start nginx
+  service: name=nginx state=started enabled=yes
+
+- name: copy custom page
+  copy:
+    src: index.html
+    dest: /var/www/html/index.nginx-debian.html
+    
+- name: create conf file
+  template:
+    src: nginx-conf.j2
+    dest: /etc/nginx/sites-available/nginx.conf
+  notify:
+    - systemd nginx reload
+- name: remove default
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+- name: check
+  stat:
+    path: /etc/nginx/sites-enabled/nginx.conf
+  register: result
+- name: add link
+  file:
+    src: /etc/nginx/sites-available/nginx.conf
+    dest: /etc/nginx/sites-enabled/nginx.conf
+    state: link

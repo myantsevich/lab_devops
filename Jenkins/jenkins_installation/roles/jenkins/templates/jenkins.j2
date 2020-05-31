@@ -1,0 +1,16 @@
+[Unit]
+Description=Jenkins Automation Server
+Wants=network.target
+
+[Service]
+Environment='JAVA_OPTS=-Duser.home=/opt/jenkins -Djenkins.install.runSetupWizard=false -Djava.awt.headless=true -Dhudson.plugins.git.GitSCM.verbo$
+TimeoutSec=5min
+KillMode=process
+GuessMainPID=no
+ExecStart=/usr/bin/java $JAVA_OPTS -jar {{ jn_home}}jenkins.war
+ExecStop=/bin/kill -15 $MAINPID
+User={{ jn_user }}
+Group={{ jn_group }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,6 @@
+---
+#sending to role user
+jn_user: jenkins
+jn_group: jenkins
+jn_home: /opt/jenkins/
+jn_uid: 2904 

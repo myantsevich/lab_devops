@@ -1,0 +1,26 @@
+{
+  "builders": [
+    {
+      "type": "googlecompute",
+      "account_file": "./mary1kubik-bc572a4361c6.json",
+      "project_id": "mary1kubik",
+      "source_image": "ubuntu-1804-bionic-v20200317",
+      "ssh_username": "root",
+      "zone": "us-central1-c",
+      "image_description": "yantsevich_ubuntu18.04_packer",
+      "image_name": "myantsevich-packer"
+    }
+  ] ,
+  "provisioners":[
+   {
+      "type": "file",
+      "source": "id_rsa",
+      "destination": "~/id_rsa"
+    },
+
+    {
+		"type": "shell",
+		"script": "script.sh"
+    }
+  ]
+}

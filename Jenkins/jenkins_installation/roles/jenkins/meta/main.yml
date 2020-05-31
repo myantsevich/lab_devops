@@ -1,0 +1,8 @@
+---
+dependencies:
+  - role: user
+    vars:
+      app_user: "{{ jn_user }}"
+      app_group: "{{ jn_group }}"
+      app_home: "{{ jn_home }}"
+      app_uid: "{{ jn_uid }}"

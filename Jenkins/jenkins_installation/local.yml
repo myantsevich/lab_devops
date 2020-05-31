@@ -1,0 +1,18 @@
+---
+- name: Jenkins_play
+  hosts: localhost
+
+  roles:
+    - role: base
+      tags: jenkins
+
+    - role: jenkins
+      tags: jenkins
+
+    - role: nginx
+      tags: jenkins
+      vars:
+        backends:
+        - name: jenkins
+          hostip: "localhost"
+          hostport: "8080"
