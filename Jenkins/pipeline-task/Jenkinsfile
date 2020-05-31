@@ -1,0 +1,85 @@
+node {
+  try {
+    def sonarUrl = 'sonar.host.url=http://10.13.1.3:9000'
+    def scannerHome = tool 'sonar-scanner-4.2.0'
+    stage('SCM Checkout'){
+        git branch: 'myantsevich', 
+        url: 'https://github.com/MNT-Lab/pipeline-task.git'
+      }
+    stage('Mvn Package') {
+        withMaven(maven: 'Maven 3.5.4') {
+            sh "mvn install -f helloworld-project/helloworld-ws/pom.xml"
+          }
+      }
+    stage('SonarQube analysis') {
+        withSonarQubeEnv(credentialsId: 'sonar') {
+            sh "${scannerHome}/bin/sonar-scanner  \
+              -Dsonar.login=sonar \
+              -Dsonar.password=sonar \
+              -Dsonar.projectKey=valera \
+              -Dsonar.projectName=valera \
+              -Dsonar.sources=. \
+              -Dsonar.projectBaseDir=helloworld-project/helloworld-ws \
+              -Dsonar.java.binaries=./target/classes"
+            }
+        }
+    stage("Testing") {
+        withMaven(maven: 'Maven 3.5.4') {
+            parallel(
+                "pre-integration-test": {
+                    echo "mvn pre-integration-test"
+                },
+                "integration-test": {
+                    echo "mvn integration-test";
+                },
+                "post-integration-test": {
+                    echo "mvn post-integration-test";
+                }
+            )  
+        }   
+    }
+    stage("Triggering job and fetching artefact") {
+        build job: 'MNTLAB-myantsevich-child1-build-job', parameters: [string(name: 'BRANCH_NAME', value: 'myantsevich')], quietPeriod: 1
+        copyArtifacts selector: lastSuccessful(), filter: "output.txt", projectName: "MNTLAB-myantsevich-child1-build-job"
+    }
+    stage ('Packaging and Publishing results'){
+        parallel(
+            "Artifacts": {
+                sh "tar -czf pipeline-myantsevich-${BUILD_NUMBER}.tar.gz Jenkinsfile output.txt helloworld-project/helloworld-ws/target/helloworld-ws.war"
+                sh "curl -v --user 'jenkins:jenkins' --upload-file ./pipeline-myantsevich-${BUILD_NUMBER}.tar.gz  http://nexus.myantsevich.playpit.net/repository/ignat/pipeline-myantsevich-${BUILD_NUMBER}.tar.gz"
+                archiveArtifacts artifacts: 'pipeline-myantsevich-${BUILD_NUMBER}.tar.gz', fingerprint: true
+            },
+            "Creating image": {
+                sh "docker build -t helloworld-myantsevich:${BUILD_NUMBER} ."
+                sh "docker login 10.13.1.6:8123 -u admin -p admin123"
+                sh "docker tag helloworld-myantsevich:${BUILD_NUMBER} 10.13.1.6:8123/helloworld-myantsevich:${BUILD_NUMBER}"
+                sh "docker push 10.13.1.6:8123/helloworld-myantsevich:${BUILD_NUMBER}"
+            }
+        )
+    }
+    stage("Manual approval") {
+        input message: 'Should we do it?', ok: 'Just do it!'
+    }
+    stage("Deployment"){
+        sh "docker pull 10.13.1.6:8123/helloworld-myantsevich:${BUILD_NUMBER}"
+        sh """
+        if [ \$(docker ps | grep test | wc -l) -gt 0 ]
+        then 
+            docker rm -f test
+            docker run -d -p 10091:8080 --name test --rm helloworld-myantsevich:${BUILD_NUMBER}
+        else
+            docker run -d -p 10091:8080 --name test --rm helloworld-myantsevich:${BUILD_NUMBER}
+        fi"""
+    }
+  } catch (e) {
+       stage('Fail notification'){
+            echo 'Something went wrong'
+            emailext attachLog: true, body: "<b>Хозяин, всё сломалось!</b><br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Go to build: ${env.BUILD_URL}", subject: "Build ${BUILD_NUMBER} has been failed", to: 'm.yantsevich@gmail.com'
+        }
+    throw e
+    }
+    stage('Success notification'){
+            echo 'Nice job'
+            emailext attachLog: true, body: "<b>Nice job =)!</b><br>Project: ${env.JOB_NAME} <br>Build Number: ${env.BUILD_NUMBER} <br> Go to build: ${env.BUILD_URL}", subject: "Build ${BUILD_NUMBER} has been finished successfully", to: 'm.yantsevich@gmail.com'
+    }
+}
